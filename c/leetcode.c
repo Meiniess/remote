@@ -11,71 +11,51 @@ typedef struct stack
 } MinStack;
 
 /** initialize your data structure here. */
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
-MinStack *minStackCreate()
+char pairs(char a)
 {
-  MinStack *obj = (MinStack*)malloc(sizeof(MinStack));
-  if(obj==NULL){return NULL;}
-  obj->flag=0;
-  obj->data=(int*)malloc(1600*sizeof(int));
-  return obj;
+  if (a == '}')
+    return '{';
+  if (a == ']')
+    return '[';
+  if (a == ')')
+    return '(';
+  return 0;
 }
 
-void minStackPush(MinStack *obj, int val)
+bool isValid(char *s)
 {
-  
-  if(obj==NULL){return NULL;}
-  obj->data[obj->flag++]=val;
-
-}
-
-void minStackPop(MinStack *obj)
-{
-  if(obj==NULL){return NULL;}
-  if(obj->flag==0){return NULL;}
-  obj->data[--obj->flag]=NULL;
-}
-
-int minStackTop(MinStack *obj)
-{
-  if(obj==NULL){return NULL;}
-  if(obj->flag==0||obj->data[obj->flag-1]==NULL){return NULL;}
-  return obj->data[obj->flag-1];
-}
-
-int minStackGetMin(MinStack *obj)
-{
-  if(obj==NULL){return NULL;}
-  if(obj->flag==0){return NULL;}
-  int temp=obj->data[obj->flag-1];
-  for(int i=0;i<obj->flag;i++)
+  int n = strlen(s);
+  if (n % 2 == 1)
   {
-    
-    if(temp>obj->data[i]){temp=obj->data[i];}
+    return false;
   }
-  return temp;
-}
-
-void minStackFree(MinStack *obj)
-{
-  free(obj->data);
-  obj->data=NULL;
-  free(obj);
-  obj=NULL;
+  int stk[n + 1], top = 0;
+  for (int i = 0; i < n; i++)
+  {
+    char ch = pairs(s[i]);
+    if (ch)
+    {
+      if (top == 0 || stk[top - 1] != ch)
+      {
+        return false;
+      }
+      top--;
+    }
+    else
+    {
+      stk[top++] = s[i];
+    }
+  }
+  return top == 0;
 }
 
 int main()
 {
-  MinStack* minstack = minStackCreate();
-  minStackPush(minstack,2);
-  minStackPush(minstack,0);
-  minStackPush(minstack,3);
-  minStackPush(minstack,0);
-  minStackGetMin(minstack);
-  minStackPop(minstack);
-  minStackGetMin(minstack);
-  minStackPop(minstack);
-  minStackGetMin(minstack);
-  minStackPop(minstack);
-  minStackGetMin(minstack);
+  char s[] = "()[]{}";
+  isValid(s);
 }
